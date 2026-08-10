@@ -18,6 +18,19 @@
 
 ---
 
+## ریپازیتوری
+
+<https://github.com/amolnovin/maildir-archive-server>
+
+```powershell
+git clone https://github.com/amolnovin/maildir-archive-server.git
+```
+
+برای فرستادن تغییرات: `git-push.bat`
+راهنمای کامل: [`docs/GIT-WORKFLOW.md`](docs/GIT-WORKFLOW.md)
+
+---
+
 ## اگر Docker روی سیستم شما کار نمی‌کند
 
 اگر خطای **«Virtualization support not detected»** می‌گیرید، مجازی‌سازی در
@@ -114,6 +127,7 @@ maildir-archive-server/
 ├── check-docker.bat              # عیب‌یابی Docker وقتی موتور بالا نمی‌آید
 ├── fix-docker.bat                # تعمیر خودکار سرویس Docker (Run as administrator)
 ├── convert-to-mbox.bat           # ⭐ تبدیل به mbox بدون Docker/مجازی‌سازی
+├── git-push.bat                  # commit و push تغییرات به گیت‌هاب
 ├── install-docker-wsl.sh         # نصب Docker Engine داخل WSL (بدون Docker Desktop)
 ├── start-wsl.bat / stop-wsl.bat / logs-wsl.bat   # اجرا در حالت WSL
 ├── docker/
@@ -148,6 +162,7 @@ maildir-archive-server/
     ├── TROUBLESHOOTING.md
     ├── DOCKER-WITHOUT-DESKTOP.md
     ├── NO-VIRTUALIZATION.md
+    ├── GIT-WORKFLOW.md
     └── TESTING.md
 ```
 
