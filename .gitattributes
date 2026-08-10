@@ -1,0 +1,11 @@
+# Shell scripts and container configs must keep LF endings,
+# otherwise the Linux container fails with "bad interpreter".
+*.sh            text eol=lf
+Dockerfile      text eol=lf
+*.conf          text eol=lf
+docker/dovecot/users text eol=lf
+*.yml           text eol=lf
+
+# Windows batch files must keep CRLF.
+*.bat           text eol=crlf
+install-docker-wsl.sh text eol=lf

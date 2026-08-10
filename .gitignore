@@ -1,0 +1,9 @@
+.env
+mail/*
+!mail/.gitkeep
+backup/*
+!backup/.gitkeep
+certs/*.key
+certs/*.crt
+docker/dovecot/users
+*.log

@@ -1,0 +1,67 @@
+name: maildir-archive-server
+
+services:
+  dovecot:
+    build:
+      context: ./docker
+      dockerfile: Dockerfile
+    image: maildir-archive/dovecot:1.0
+    container_name: mas-dovecot
+    hostname: ${MAIL_HOSTNAME:-mail.local}
+    restart: unless-stopped
+    ports:
+      - "${IMAP_PORT:-143}:143"     # IMAP + STARTTLS
+      - "${IMAPS_PORT:-993}:993"    # IMAPS
+      - "${POP3_PORT:-110}:110"     # POP3 (اختیاری)
+      - "${POP3S_PORT:-995}:995"    # POP3S (اختیاری)
+    volumes:
+      - ./docker/dovecot:/etc/dovecot:ro
+      - ./mail:/srv/mail
+      - ./certs:/etc/dovecot/certs:ro
+      - ./backup:/srv/backup
+    environment:
+      - TZ=${TZ:-Asia/Tehran}
+    healthcheck:
+      test: ["CMD", "doveadm", "service", "status"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  webpanel:
+    image: php:8.3-cli-alpine
+    container_name: mas-webpanel
+    restart: unless-stopped
+    working_dir: /app
+    command: php -S 0.0.0.0:8080 -t /app
+    ports:
+      - "${PANEL_PORT:-8080}:8080"
+    volumes:
+      - ./webpanel:/app:ro
+      - ./mail:/srv/mail:ro
+      - ./docker/dovecot:/etc/dovecot:ro
+    environment:
+      - TZ=${TZ:-Asia/Tehran}
+    depends_on:
+      - dovecot
+
+  # وب‌میل (اختیاری): docker compose --profile webmail up -d
+  roundcube:
+    image: roundcube/roundcubemail:latest
+    container_name: mas-roundcube
+    restart: unless-stopped
+    profiles: ["webmail"]
+    ports:
+      - "${WEBMAIL_PORT:-8000}:80"
+    environment:
+      - ROUNDCUBEMAIL_DEFAULT_HOST=dovecot
+      - ROUNDCUBEMAIL_DEFAULT_PORT=143
+      - ROUNDCUBEMAIL_SMTP_SERVER=
+      - ROUNDCUBEMAIL_DB_TYPE=sqlite
+      - ROUNDCUBEMAIL_UPLOAD_MAX_FILESIZE=64M
+    volumes:
+      - roundcube-db:/var/roundcube/db
+    depends_on:
+      - dovecot
+
+volumes:
+  roundcube-db:

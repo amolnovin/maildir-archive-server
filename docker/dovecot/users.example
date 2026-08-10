@@ -1,0 +1,19 @@
+# Maildir Archive Server - users file (TEMPLATE)
+#
+# Copy this file to "users" (no extension) in the same folder.
+# start.bat creates it automatically on first run.
+#
+# One account per line:
+#   email:{SHA512-CRYPT}hash:5000:5000::/srv/mail/<domain>/<user>
+#
+# Example:
+#   info@example.com:{SHA512-CRYPT}$6$xxxx...:5000:5000::/srv/mail/example.com/info
+#
+# Generate a password hash with:
+#   docker exec mas-dovecot doveadm pw -s SHA512-CRYPT -p "YourPassword"
+#
+# Rules:
+#   - LF line endings, no BOM (Dovecot is strict about this)
+#   - the real "users" file is gitignored because it holds password hashes
+#
+# Managed automatically by scripts\Add-User.ps1
