@@ -24,13 +24,15 @@ if not exist "scripts\Convert-MaildirToMbox.ps1" goto :missing
 set "SRC=%~1"
 if not "%SRC%"=="" goto :have_src
 
-echo Drag the backup folder onto this file, or type its path below.
+echo Drag the backup onto this file, or type its path below.
 echo.
-echo Examples:
-echo    D:\backup\extracted
-echo    D:\backup\imap
+echo It accepts either:
+echo    - the .tar.gz backup file straight from DirectAdmin
+echo         D:\mail\backup-Feb-09-2026-1.tar.gz
+echo    - or an already extracted folder
+echo         D:\backup\extracted
 echo.
-set /p "SRC=Backup folder: "
+set /p "SRC=Backup file or folder: "
 if "%SRC%"=="" goto :no_src
 
 :have_src
@@ -68,9 +70,11 @@ echo [ERROR] No folder given.
 goto :done
 
 :bad_src
-echo [ERROR] Folder not found:
+echo [ERROR] Not found:
 echo         %SRC%
 echo         Check the path and try again.
+echo         Tip: drag the file or folder onto this .bat instead of
+echo              typing the path by hand.
 goto :done
 
 :failed

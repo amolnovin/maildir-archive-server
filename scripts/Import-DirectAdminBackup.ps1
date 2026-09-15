@@ -33,6 +33,32 @@ param(
 
 if (-not (Test-Path $Source)) { Write-Err "مسیر ورودی یافت نشد: $Source"; exit 1 }
 
+# ---------- بررسی پیش‌نیاز: این اسکریپت به Docker نیاز دارد ----------
+# بدون موتور Docker، ایمیل‌ها کپی می‌شوند ولی هیچ راهی برای خواندنشان
+# نیست. بهتر است همین اول صریح بگوییم تا کاربر وقت هدر ندهد.
+if (-not (Test-ContainerRunning)) {
+    Write-Host ""
+    Write-Err "کانتینر Docker در حال اجرا نیست."
+    Write-Host ""
+    Write-Info "این اسکریپت برای حالت Docker است. بدون آن، ایمیل‌ها فقط"
+    Write-Info "کپی می‌شوند ولی قابل خواندن نخواهند بود."
+    Write-Host ""
+    Write-Host "  اگر Docker دارید:" -ForegroundColor White
+    Write-Host "     اول start.bat را اجرا کنید، بعد این اسکریپت را."
+    Write-Host ""
+    Write-Host "  اگر Docker ندارید یا کار نمی‌کند (مثلاً مجازی‌سازی نیست):" -ForegroundColor White
+    Write-Host "     از مبدل mbox استفاده کنید که هیچ پیش‌نیازی ندارد:"
+    Write-Host ""
+    Write-Host "       .\convert-to-mbox.bat" -ForegroundColor Green
+    Write-Host ""
+    Write-Host "     یا مستقیم:"
+    Write-Host "       powershell -ExecutionPolicy Bypass -File scripts\Convert-MaildirToMbox.ps1 -Source `"$Source`"" -ForegroundColor Green
+    Write-Host ""
+    Write-Info "راهنمای کامل: docs\START-HERE.md"
+    Write-Host ""
+    exit 1
+}
+
 $temp = $null
 $root = $null
 

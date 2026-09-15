@@ -62,6 +62,68 @@ mail\<domain>\<user>\Maildir\subscriptions
 اگر فلگ‌ها از بین رفت (همه چیز unread شد)، ایمیل‌ها سالم‌اند و فقط وضعیت خوانده‌شده از دست رفته است.
 
 
+## خطای «The argument ... does not exist» هنگام اجرای اسکریپت
+
+نمونهٔ خطا:
+
+```
+PS C:\Users\iMAN> powershell -File scripts\Import-DirectAdminBackup.ps1 ...
+The argument 'scripts\Import-DirectAdminBackup.ps1' to the -File parameter
+does not exist.
+```
+
+**علت:** شما در پوشهٔ پروژه نیستید. به ابتدای خط فرمان نگاه کنید:
+`PS C:\Users\iMAN>` یعنی در پوشهٔ کاربری هستید، نه جایی که پروژه است.
+مسیر `scripts\...` یک مسیر **نسبی** است و فقط از داخل پوشهٔ پروژه معنی
+دارد.
+
+### راه‌حل
+
+اول با `cd` به پوشهٔ پروژه بروید:
+
+```powershell
+cd D:\maildir-archive-server
+```
+
+اگر پروژه روی درایو دیگری است، از سوییچ `/d` استفاده کنید (در CMD):
+
+```
+cd /d D:\maildir-archive-server
+```
+
+بررسی کنید که درست آمده‌اید:
+
+```powershell
+dir scripts\*.ps1
+```
+
+باید فهرست اسکریپت‌ها را ببینید. حالا دستور را اجرا کنید.
+
+> 💡 راه ساده‌تر: در File Explorer وارد پوشهٔ پروژه شوید، در نوار آدرس
+> کلمهٔ `powershell` را تایپ کنید و Enter بزنید. PowerShell دقیقاً در
+> همان پوشه باز می‌شود.
+
+### یا مسیر کامل بدهید
+
+```powershell
+powershell -ExecutionPolicy Bypass -File "D:\maildir-archive-server\scripts\Convert-MaildirToMbox.ps1" -Source "D:\mail\backup.tar.gz"
+```
+
+---
+
+## Import-DirectAdminBackup می‌گوید کانتینر اجرا نیست
+
+این اسکریپت **فقط برای حالت Docker** است. اگر Docker روی سیستم شما کار
+نمی‌کند (مثلاً مجازی‌سازی ندارید)، از مبدل mbox استفاده کنید که هیچ
+پیش‌نیازی ندارد:
+
+```
+convert-to-mbox.bat
+```
+
+این فایل هم `.tar.gz` و هم پوشهٔ اکسترکت‌شده را قبول می‌کند و خروجی‌اش
+مستقیماً در Thunderbird قابل import است.
+
 ## سرویس Docker با کد ۱۰۷۷ متوقف است (رایج‌ترین حالت)
 
 نشانه در خروجی `check-docker.bat` یا `start-log.txt`:

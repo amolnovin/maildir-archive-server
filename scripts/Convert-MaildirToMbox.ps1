@@ -47,6 +47,65 @@ function Write-Err   ($m) { Write-Host "[ERROR] $m" -ForegroundColor Red }
 
 if (-not (Test-Path $Source)) { Write-Err "مسیر ورودی یافت نشد: $Source"; exit 1 }
 
+# ---------------------------------------------------------------
+#  اگر ورودی یک فایل فشرده است، اول آن را استخراج کن
+#  (tar.gz / tgz / tar / tar.zst / zip)
+# ---------------------------------------------------------------
+$TempExtract = $null
+if (-not (Get-Item $Source).PSIsContainer) {
+    $name = [IO.Path]::GetFileName($Source).ToLower()
+    $TempExtract = Join-Path ([System.IO.Path]::GetTempPath()) ("mas-x-" + [guid]::NewGuid().ToString("N").Substring(0,8))
+    New-Item -ItemType Directory -Path $TempExtract -Force | Out-Null
+
+    Write-Info "ورودی یک فایل فشرده است. در حال استخراج..."
+    Write-Info "(برای بکاپ‌های چند گیگابایتی چند دقیقه طول می‌کشد)"
+
+    try {
+        if ($name -like "*.zip") {
+            Expand-Archive -Path $Source -DestinationPath $TempExtract -Force
+        }
+        elseif ($name -like "*.tar.zst" -or $name -like "*.zst") {
+            & tar --use-compress-program=unzstd -xf $Source -C $TempExtract
+            if ($LASTEXITCODE -ne 0) { throw "tar/zstd خطا داد (کد $LASTEXITCODE)" }
+        }
+        elseif ($name -like "*.tar.gz" -or $name -like "*.tgz") {
+            & tar -xzf $Source -C $TempExtract
+            if ($LASTEXITCODE -ne 0) { throw "tar خطا داد (کد $LASTEXITCODE)" }
+        }
+        elseif ($name -like "*.tar") {
+            & tar -xf $Source -C $TempExtract
+            if ($LASTEXITCODE -ne 0) { throw "tar خطا داد (کد $LASTEXITCODE)" }
+        }
+        else {
+            Write-Err "نوع فایل شناخته نشد: $name"
+            Write-Info "فرمت‌های پشتیبانی‌شده: .tar.gz .tgz .tar .tar.zst .zip"
+            Write-Info "یا فایل را دستی اکسترکت کنید و مسیر پوشه را بدهید."
+            Remove-Item $TempExtract -Recurse -Force -ErrorAction SilentlyContinue
+            exit 1
+        }
+    } catch {
+        Write-Err "استخراج ناموفق بود: $($_.Exception.Message)"
+        Write-Info "مطمئن شوید دستور tar در دسترس است (ویندوز ۱۰ به بالا دارد):  tar --version"
+        Write-Info "یا فایل را با 7-Zip اکسترکت کنید و مسیر پوشه را بدهید."
+        Remove-Item $TempExtract -Recurse -Force -ErrorAction SilentlyContinue
+        exit 1
+    }
+
+    Write-Ok "استخراج انجام شد."
+
+    # بعضی بکاپ‌ها دو لایه فشرده‌اند: داخلشان یک .tar دیگر هست
+    $innerTar = Get-ChildItem -Path $TempExtract -File -Filter "*.tar" -ErrorAction SilentlyContinue |
+                Select-Object -First 1
+    if ($innerTar -and -not (Get-ChildItem -Path $TempExtract -Directory -Force -ErrorAction SilentlyContinue)) {
+        Write-Info "یک فایل tar داخلی پیدا شد، در حال استخراج لایهٔ دوم..."
+        & tar -xf $innerTar.FullName -C $TempExtract
+        Remove-Item $innerTar.FullName -Force -ErrorAction SilentlyContinue
+        Write-Ok "لایهٔ دوم استخراج شد."
+    }
+
+    $Source = $TempExtract
+}
+
 if (-not $Destination) {
     $Destination = Join-Path (Split-Path -Parent $PSScriptRoot) "mbox-export"
 }
@@ -308,6 +367,12 @@ foreach ($mb in $maildirs) {
 
     $totalBoxes++
     Write-Host ""
+}
+
+# پاک کردن فایل‌های موقت استخراج‌شده
+if ($TempExtract -and (Test-Path $TempExtract)) {
+    Write-Info "پاک‌سازی فایل‌های موقت..."
+    Remove-Item $TempExtract -Recurse -Force -ErrorAction SilentlyContinue
 }
 
 Write-Host "==========================================" -ForegroundColor White
