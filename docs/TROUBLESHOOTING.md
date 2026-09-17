@@ -62,6 +62,64 @@ mail\<domain>\<user>\Maildir\subscriptions
 اگر فلگ‌ها از بین رفت (همه چیز unread شد)، ایمیل‌ها سالم‌اند و فقط وضعیت خوانده‌شده از دست رفته است.
 
 
+## خطای «The string is missing the terminator» با متن به‌هم‌ریخته
+
+نمونهٔ خطا:
+
+```
+At D:\maildir-archive-server\scripts\Add-Domain.ps1:28 char:88
++ ... ط¨ط¹ط¯: ط³ط§ط®طھ ع©ط§ط±ط¨ط± ط¨ط§  .\Add-User.ps1 ...
+The string is missing the terminator: ".
+Missing closing '}' in statement block or type definition.
+```
+
+**علت:** حروف به‌هم‌ریختهٔ `ط¨ط¹ط¯` نشانهٔ مشکل **encoding** است، نه ایراد
+منطق اسکریپت.
+
+**Windows PowerShell 5.1** (نسخهٔ پیش‌فرض ویندوز) وقتی فایل `.ps1` علامت
+**BOM** نداشته باشد، آن را با **کدپیج سیستم** می‌خواند — روی ویندوز فارسی
+یعنی cp1256، نه UTF-8. در نتیجه متن‌های فارسی خراب می‌شوند و کاراکتر `"`
+انتهای رشته گم می‌شود، پس پارسر خطای «missing the terminator» می‌دهد.
+
+**راه‌حل:** در نسخهٔ فعلی پروژه همهٔ اسکریپت‌ها با **UTF-8 BOM** ذخیره
+شده‌اند و این مشکل برطرف است. کافی است به‌روزرسانی کنید:
+
+```powershell
+git pull origin main
+```
+
+### اگر باز هم دیدید
+
+بررسی کنید فایل BOM دارد:
+
+```powershell
+$b = [System.IO.File]::ReadAllBytes("scripts\Add-Domain.ps1")
+if ($b[0] -eq 0xEF -and $b[1] -eq 0xBB -and $b[2] -eq 0xBF) { "BOM ok" } else { "BOM missing" }
+```
+
+اگر گم شده بود (مثلاً چون فایل را با ویرایشگری ذخیره کرده‌اید که BOM را
+حذف می‌کند)، با این دستور برش گردانید:
+
+```powershell
+Get-ChildItem scripts\*.ps1 | ForEach-Object {
+    $t = Get-Content $_.FullName -Raw -Encoding UTF8
+    [System.IO.File]::WriteAllText($_.FullName, $t, (New-Object System.Text.UTF8Encoding($true)))
+}
+```
+
+> 💡 نکته برای ویرایش: اگر خواستید اسکریپت‌ها را تغییر دهید، در VS Code
+> پایین-راست باید بنویسد **UTF-8 with BOM**. در Notepad هنگام Save As
+> گزینهٔ **UTF-8 with BOM** را انتخاب کنید.
+>
+> فایل `.gitattributes` این فایل‌ها را `-text` علامت زده تا گیت هنگام
+> checkout بایت‌ها را دست نزند.
+
+### چرا فقط روی سیستم شما؟
+
+روی **PowerShell 7** این مشکل وجود ندارد چون پیش‌فرضش UTF-8 است. فقط
+**Windows PowerShell 5.1** (همانی که با `powershell` اجرا می‌شود) به BOM
+نیاز دارد.
+
 ## خطای «running scripts is disabled on this system»
 
 نمونهٔ خطا:

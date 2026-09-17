@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     خروجی گرفتن از یک اکانت به فرمت mbox (برای Thunderbird / ImportExportTools NG).
 

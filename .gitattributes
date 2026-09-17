@@ -4,8 +4,16 @@
 Dockerfile      text eol=lf
 *.conf          text eol=lf
 docker/dovecot/users text eol=lf
+docker/dovecot/users.example text eol=lf
 *.yml           text eol=lf
 
 # Windows batch files must keep CRLF.
 *.bat           text eol=crlf
-install-docker-wsl.sh text eol=lf
+
+# PowerShell scripts are stored byte-for-byte.
+# They begin with a UTF-8 BOM, which Windows PowerShell 5.1 needs in
+# order to read the Persian text as UTF-8. Without the BOM it falls
+# back to the system codepage (for example cp1256) and the file fails
+# to parse with "The string is missing the terminator".
+# Marking them binary stops git from touching the bytes on checkout.
+*.ps1           -text
