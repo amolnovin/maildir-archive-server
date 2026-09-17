@@ -78,17 +78,22 @@ loaded because running scripts is disabled on this system.
 
 ### راه‌حل ۱ — ساده‌ترین (توصیه‌شده)
 
-از این فایل استفاده کنید که خودش قفل را دور می‌زند:
+از فایل‌های `.bat` استفاده کنید که خودشان قفل را دور می‌زنند:
+
+| کاری که می‌خواهید | فایل |
+|---|---|
+| وارد کردن بکاپ (با Docker) | `import-backup.bat` |
+| تبدیل به mbox (بدون Docker) | `convert-to-mbox.bat` |
+| هر اسکریپت دیگری | `run-script.bat <نام>` |
+
+مثال:
 
 ```
-run-script.bat Import-DirectAdminBackup -Source "D:\mail\backup.tar.gz" -CreateAccounts
+import-backup.bat "D:\backup\backup-Feb-09-2026-1.tar.gz"
 ```
 
-بدون آرگومان اجرایش کنید تا فهرست همهٔ اسکریپت‌ها را ببینید:
-
-```
-run-script.bat
-```
+`run-script.bat` را بدون آرگومان اجرا کنید تا فهرست همهٔ اسکریپت‌ها را
+ببینید.
 
 ### راه‌حل ۲ — افزودن سوییچ به دستور
 

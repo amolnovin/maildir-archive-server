@@ -234,11 +234,26 @@ powershell -ExecutionPolicy Bypass -File scripts\Add-Domain.ps1 -Domain komajsab
 
 ## گام B4 — بکاپ را وارد کنید
 
+ساده‌ترین راه، دابل‌کلیک روی این فایل است:
+
+```
+import-backup.bat
+```
+
+مسیر بکاپ و رمز دلخواه را می‌پرسد. فایل `.tar.gz` را مستقیم قبول می‌کند —
+لازم نیست اکسترکت کنید. می‌توانید فایل را هم روی آن بکشید و رها کنید.
+
+یا اگر ترجیح می‌دهید دستی بنویسید:
+
 ```powershell
 powershell -ExecutionPolicy Bypass -File scripts\Import-DirectAdminBackup.ps1 `
     -Source "D:\backup\user.admin.komajsaba.tar.gz" `
     -CreateAccounts -DefaultPassword "Archive2026!"
 ```
+
+> ⚠️ اگر `-ExecutionPolicy Bypass` را جا بیندازید، ویندوز خطای
+> «running scripts is disabled on this system» می‌دهد. فایل
+> `import-backup.bat` این سوییچ را خودش اضافه می‌کند.
 
 این دستور:
 - بکاپ را اکسترکت می‌کند (فایل `tar.gz` را مستقیم قبول می‌کند)
@@ -294,6 +309,7 @@ powershell -ExecutionPolicy Bypass -File scripts\Get-Mailboxes.ps1
 | `fix-docker.bat` | 🔧 تعمیر سرویس Docker (**Run as administrator**) |
 | `start-debug.bat` | اجرا + ذخیرهٔ لاگ کامل در `start-log.txt` |
 | `git-push.bat` | فرستادن تغییرات به گیت‌هاب |
+| `import-backup.bat` | ⭐ **مسیر B** — وارد کردن بکاپ در سرور Docker |
 | `run-script.bat` | اجرای اسکریپت‌های PowerShell بدون خطای ExecutionPolicy |
 
 ### فایل‌های حالت WSL

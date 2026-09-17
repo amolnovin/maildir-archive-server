@@ -103,9 +103,7 @@ backup/restore، خروجی mbox و پنل وب. جزئیات و فهرست با
 powershell -ExecutionPolicy Bypass -File scripts\Add-Domain.ps1 -Domain komajsaba.com
 
 # ۳) Import بکاپ دایرکت‌ادمین (فایل tar.gz یا پوشهٔ extract شده)
-powershell -ExecutionPolicy Bypass -File scripts\Import-DirectAdminBackup.ps1 `
-    -Source "D:\backups\user.admin.komaj.tar.gz" `
-    -CreateAccounts -DefaultPassword "Archive2026!"
+.\import-backup.bat
 
 # ۴) مشاهدهٔ نتیجه
 powershell -ExecutionPolicy Bypass -File scripts\Get-Mailboxes.ps1
@@ -142,6 +140,7 @@ maildir-archive-server/
 ├── fix-docker.bat                # تعمیر خودکار سرویس Docker (Run as administrator)
 ├── convert-to-mbox.bat           # ⭐ تبدیل به mbox بدون Docker/مجازی‌سازی
 ├── git-push.bat                  # commit و push تغییرات به گیت‌هاب
+├── import-backup.bat             # وارد کردن بکاپ در سرور Docker
 ├── run-script.bat                # اجرای اسکریپت‌ها بدون خطای ExecutionPolicy
 ├── install-docker-wsl.sh         # نصب Docker Engine داخل WSL (بدون Docker Desktop)
 ├── start-wsl.bat / stop-wsl.bat / logs-wsl.bat   # اجرا در حالت WSL
