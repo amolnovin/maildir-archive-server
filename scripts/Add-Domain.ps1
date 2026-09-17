@@ -25,4 +25,12 @@ if (Test-Path $path) {
 }
 
 Write-Info "مسیر: $path"
-Write-Info "گام بعد: ساخت کاربر با  .\Add-User.ps1 -Email info@$Domain"
+Write-Host ""
+Write-Host "  گام بعد — ساخت اکانت (یکی از این دو راه):" -ForegroundColor White
+Write-Host ""
+Write-Host "    run-script.bat Add-User -Email info@$Domain" -ForegroundColor Green
+Write-Host ""
+Write-Host "  یا:" -ForegroundColor White
+Write-Host "    powershell -ExecutionPolicy Bypass -File scripts\Add-User.ps1 -Email info@$Domain" -ForegroundColor Green
+Write-Host ""
+Write-Info "برای وارد کردن بکاپ کامل به‌جای ساخت تک‌تک اکانت‌ها: import-backup.bat"

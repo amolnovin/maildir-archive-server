@@ -62,6 +62,54 @@ mail\<domain>\<user>\Maildir\subscriptions
 اگر فلگ‌ها از بین رفت (همه چیز unread شد)، ایمیل‌ها سالم‌اند و فقط وضعیت خوانده‌شده از دست رفته است.
 
 
+## خطای «The term '.\Add-User.ps1' is not recognized»
+
+نمونهٔ خطا:
+
+```
+PS D:\maildir-archive-server> .\Add-User.ps1 -Email info@komajsaba.com
+.\Add-User.ps1 : The term '.\Add-User.ps1' is not recognized as the name of a
+cmdlet, function, script file, or operable program.
+```
+
+**علت:** اسکریپت‌ها داخل پوشهٔ `scripts\` هستند، نه ریشهٔ پروژه. پس
+`.\Add-User.ps1` وجود ندارد — مسیر درست `scripts\Add-User.ps1` است.
+
+> این خطا تقصیر شما نبود: نسخه‌های قبلی `Add-Domain.ps1` همین دستور
+> نادرست را به‌عنوان «گام بعد» چاپ می‌کرد. در نسخهٔ فعلی اصلاح شده است.
+
+### راه‌حل
+
+ساده‌ترین راه:
+
+```
+add-user.bat info@komajsaba.com
+```
+
+یا با رمز مشخص:
+
+```
+add-user.bat info@komajsaba.com MyPassword
+```
+
+یا به‌صورت دستی با مسیر کامل و سوییچ ExecutionPolicy:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File scripts\Add-User.ps1 -Email info@komajsaba.com
+```
+
+> 💡 معمولاً اصلاً نیازی به ساخت تک‌تک اکانت‌ها نیست. اگر بکاپ را با
+> `import-backup.bat` وارد کنید، اکانت همهٔ mailboxها یک‌جا ساخته می‌شود.
+
+### قاعدهٔ کلی
+
+هیچ‌کدام از اسکریپت‌های `.ps1` در ریشهٔ پروژه نیستند. همیشه یکی از این دو:
+
+| روش | نمونه |
+|---|---|
+| فایل `.bat` | `run-script.bat Add-User -Email info@example.com` |
+| مسیر کامل | `powershell -ExecutionPolicy Bypass -File scripts\Add-User.ps1 ...` |
+
 ## خطای «The string is missing the terminator» با متن به‌هم‌ریخته
 
 نمونهٔ خطا:

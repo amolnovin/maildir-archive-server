@@ -49,6 +49,7 @@ Write-Ok ("مجموع: {0} اکانت — {1} پیام — {2} MB" -f `
 $noAcc = $report | Where-Object { -not $_.HasAccount }
 if ($noAcc) {
     Write-Host ""
-    Write-Warn2 "این mailboxها فایل روی دیسک دارند ولی رمز/اکانت ندارند (با Add-User.ps1 بسازید):"
+    Write-Warn2 "این mailboxها فایل روی دیسک دارند ولی رمز/اکانت ندارند."
+    Write-Warn2 "برای هرکدام:  run-script.bat Add-User -Email <آدرس>"
     $noAcc | ForEach-Object { Write-Host "   - $($_.Email)" }
 }

@@ -310,6 +310,7 @@ powershell -ExecutionPolicy Bypass -File scripts\Get-Mailboxes.ps1
 | `start-debug.bat` | اجرا + ذخیرهٔ لاگ کامل در `start-log.txt` |
 | `git-push.bat` | فرستادن تغییرات به گیت‌هاب |
 | `import-backup.bat` | ⭐ **مسیر B** — وارد کردن بکاپ در سرور Docker |
+| `add-user.bat` | ساخت یک اکانت ایمیل یا تغییر رمز آن |
 | `run-script.bat` | اجرای اسکریپت‌های PowerShell بدون خطای ExecutionPolicy |
 
 ### فایل‌های حالت WSL
@@ -388,11 +389,22 @@ powershell -ExecutionPolicy Bypass -File scripts\Add-Domain.ps1 -Domain shekar-s
 powershell -ExecutionPolicy Bypass -File scripts\Import-DirectAdminBackup.ps1 -Source "D:\backup\shekar.tar.gz" -OnlyDomain shekar-shekan.com -CreateAccounts
 ```
 
-### تغییر رمز یک اکانت
+### ساخت اکانت یا تغییر رمز
 
-```powershell
-powershell -ExecutionPolicy Bypass -File scripts\Add-User.ps1 -Email info@komajsaba.com -Password "NewPass123!"
 ```
+add-user.bat info@komajsaba.com
+```
+
+یا با رمز مشخص:
+
+```
+add-user.bat info@komajsaba.com NewPass123!
+```
+
+> ⚠️ دستور `.\Add-User.ps1` کار **نمی‌کند**، چون اسکریپت‌ها داخل پوشهٔ
+> `scripts\` هستند نه ریشهٔ پروژه. از `add-user.bat` استفاده کنید یا
+> مسیر کامل بدهید:
+> `powershell -ExecutionPolicy Bypass -File scripts\Add-User.ps1 -Email ...`
 
 ### تغییر پورت (وقتی پورت اشغال است)
 

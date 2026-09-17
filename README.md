@@ -141,6 +141,7 @@ maildir-archive-server/
 ├── convert-to-mbox.bat           # ⭐ تبدیل به mbox بدون Docker/مجازی‌سازی
 ├── git-push.bat                  # commit و push تغییرات به گیت‌هاب
 ├── import-backup.bat             # وارد کردن بکاپ در سرور Docker
+├── add-user.bat                  # ساخت اکانت / تغییر رمز
 ├── run-script.bat                # اجرای اسکریپت‌ها بدون خطای ExecutionPolicy
 ├── install-docker-wsl.sh         # نصب Docker Engine داخل WSL (بدون Docker Desktop)
 ├── start-wsl.bat / stop-wsl.bat / logs-wsl.bat   # اجرا در حالت WSL

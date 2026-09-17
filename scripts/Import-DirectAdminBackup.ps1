@@ -198,4 +198,5 @@ try {
 } catch {
     Write-Warn2 "ساخت ایندکس رد شد (Docker در دسترس نیست). مشکلی نیست؛ خودکار ساخته می‌شود."
 }
-Write-Info "گام بعد: اگر از -CreateAccounts استفاده نکردید، با Add-User.ps1 برای هر اکانت رمز تعریف کنید."
+Write-Info "گام بعد: اگر از -CreateAccounts استفاده نکردید، برای هر اکانت رمز تعریف کنید:"
+Write-Host "    run-script.bat Add-User -Email info@example.com" -ForegroundColor Green
