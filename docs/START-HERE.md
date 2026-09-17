@@ -294,6 +294,7 @@ powershell -ExecutionPolicy Bypass -File scripts\Get-Mailboxes.ps1
 | `fix-docker.bat` | 🔧 تعمیر سرویس Docker (**Run as administrator**) |
 | `start-debug.bat` | اجرا + ذخیرهٔ لاگ کامل در `start-log.txt` |
 | `git-push.bat` | فرستادن تغییرات به گیت‌هاب |
+| `run-script.bat` | اجرای اسکریپت‌های PowerShell بدون خطای ExecutionPolicy |
 
 ### فایل‌های حالت WSL
 
@@ -308,8 +309,21 @@ powershell -ExecutionPolicy Bypass -File scripts\Get-Mailboxes.ps1
 
 ### اسکریپت‌های مدیریتی (`scripts\`)
 
-همه را با این الگو اجرا کنید:
+ساده‌ترین راه اجرا، استفاده از `run-script.bat` است که خودش قفل
+ExecutionPolicy ویندوز را دور می‌زند:
+
+```
+run-script.bat Get-Mailboxes
+run-script.bat Add-Domain -Domain komajsaba.com
+```
+
+بدون آرگومان اجرایش کنید تا فهرست همهٔ اسکریپت‌ها را ببینید.
+
+یا به‌صورت دستی (حتماً با `-ExecutionPolicy Bypass`):
 `powershell -ExecutionPolicy Bypass -File scripts\<نام> <پارامترها>`
+
+> اگر `-ExecutionPolicy Bypass` را جا بیندازید، ویندوز خطای
+> «running scripts is disabled on this system» می‌دهد.
 
 | اسکریپت | کار |
 |---|---|
@@ -410,7 +424,7 @@ git-push.bat "توضیح تغییر"
 | سرویس Docker متوقف (کد ۱۰۷۷) | `fix-docker.bat` را **Run as administrator** کنید |
 | پورت ۱۴۳ اشغال است | در `.env` پورت‌ها را عوض کنید |
 | پوشه‌ها در Thunderbird دیده نمی‌شوند | راست‌کلیک روی حساب → **Subscribe** |
-| اسکریپت PowerShell اجرا نمی‌شود | `powershell -ExecutionPolicy Bypass -File ...` |
+| `running scripts is disabled on this system` | از `run-script.bat` استفاده کنید یا `-ExecutionPolicy Bypass` اضافه کنید |
 
 ### مستندات کامل
 

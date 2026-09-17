@@ -62,6 +62,77 @@ mail\<domain>\<user>\Maildir\subscriptions
 اگر فلگ‌ها از بین رفت (همه چیز unread شد)، ایمیل‌ها سالم‌اند و فقط وضعیت خوانده‌شده از دست رفته است.
 
 
+## خطای «running scripts is disabled on this system»
+
+نمونهٔ خطا:
+
+```
+File D:\maildir-archive-server\scripts\Import-DirectAdminBackup.ps1 cannot be
+loaded because running scripts is disabled on this system.
+    + FullyQualifiedErrorId : UnauthorizedAccess
+```
+
+**علت:** ویندوز به‌صورت پیش‌فرض اجرای فایل‌های `.ps1` را مسدود می‌کند
+(تنظیمی به نام **ExecutionPolicy**). این یک قفل امنیتی ویندوز است، نه
+ایراد پروژه.
+
+### راه‌حل ۱ — ساده‌ترین (توصیه‌شده)
+
+از این فایل استفاده کنید که خودش قفل را دور می‌زند:
+
+```
+run-script.bat Import-DirectAdminBackup -Source "D:\mail\backup.tar.gz" -CreateAccounts
+```
+
+بدون آرگومان اجرایش کنید تا فهرست همهٔ اسکریپت‌ها را ببینید:
+
+```
+run-script.bat
+```
+
+### راه‌حل ۲ — افزودن سوییچ به دستور
+
+به دستور `-ExecutionPolicy Bypass` اضافه کنید:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File scripts\Import-DirectAdminBackup.ps1 -Source "D:\mail\backup.tar.gz" -CreateAccounts
+```
+
+> این سوییچ فقط روی **همان یک اجرا** اثر دارد و هیچ تنظیمی از ویندوز را
+> برای همیشه عوض نمی‌کند. امن‌ترین روش است.
+
+### راه‌حل ۳ — تغییر دائمی برای کاربر فعلی
+
+اگر می‌خواهید دیگر هر بار سوییچ ننویسید:
+
+```powershell
+Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy RemoteSigned
+```
+
+سپس `Y` را بزنید.
+
+- `RemoteSigned` یعنی اسکریپت‌های محلی اجرا می‌شوند ولی اسکریپت‌های
+  دانلودشده از اینترنت باید امضا داشته باشند.
+- فقط روی حساب کاربری شما اثر دارد و نیازی به دسترسی Administrator ندارد.
+
+بررسی وضعیت فعلی:
+
+```powershell
+Get-ExecutionPolicy -List
+```
+
+> ⚠️ از `Set-ExecutionPolicy Unrestricted` استفاده نکنید — همهٔ محافظت را
+> برمی‌دارد. `RemoteSigned` کافی است.
+
+### اگر پروژه را از اینترنت دانلود کرده‌اید
+
+ویندوز فایل‌های دانلودشده را «بلاک» می‌کند. اگر با وجود تنظیمات بالا باز
+هم خطا گرفتید، این را در پوشهٔ پروژه اجرا کنید:
+
+```powershell
+Get-ChildItem -Recurse | Unblock-File
+```
+
 ## خطای «The argument ... does not exist» هنگام اجرای اسکریپت
 
 نمونهٔ خطا:

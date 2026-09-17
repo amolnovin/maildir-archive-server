@@ -100,15 +100,15 @@ backup/restore، خروجی mbox و پنل وب. جزئیات و فهرست با
 .\start.bat
 
 # ۲) افزودن دامنه
-powershell -File scripts\Add-Domain.ps1 -Domain komajsaba.com
+powershell -ExecutionPolicy Bypass -File scripts\Add-Domain.ps1 -Domain komajsaba.com
 
 # ۳) Import بکاپ دایرکت‌ادمین (فایل tar.gz یا پوشهٔ extract شده)
-powershell -File scripts\Import-DirectAdminBackup.ps1 `
+powershell -ExecutionPolicy Bypass -File scripts\Import-DirectAdminBackup.ps1 `
     -Source "D:\backups\user.admin.komaj.tar.gz" `
     -CreateAccounts -DefaultPassword "Archive2026!"
 
 # ۴) مشاهدهٔ نتیجه
-powershell -File scripts\Get-Mailboxes.ps1
+powershell -ExecutionPolicy Bypass -File scripts\Get-Mailboxes.ps1
 # یا پنل وب:  http://localhost:8080
 ```
 
@@ -142,6 +142,7 @@ maildir-archive-server/
 ├── fix-docker.bat                # تعمیر خودکار سرویس Docker (Run as administrator)
 ├── convert-to-mbox.bat           # ⭐ تبدیل به mbox بدون Docker/مجازی‌سازی
 ├── git-push.bat                  # commit و push تغییرات به گیت‌هاب
+├── run-script.bat                # اجرای اسکریپت‌ها بدون خطای ExecutionPolicy
 ├── install-docker-wsl.sh         # نصب Docker Engine داخل WSL (بدون Docker Desktop)
 ├── start-wsl.bat / stop-wsl.bat / logs-wsl.bat   # اجرا در حالت WSL
 ├── docker/
